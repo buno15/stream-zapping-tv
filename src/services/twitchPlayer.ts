@@ -6,7 +6,7 @@ let scriptLoading = false;
 const scriptLoadCallbacks: (() => void)[] = [];
 
 /**
- * Twitch Embed API スクリプトを非同期で読み込む
+ * Twitch Embed API スクリプトを非同期で読み込む（タイムアウト付き）
  */
 export const loadTwitchAPI = (): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -24,11 +24,18 @@ export const loadTwitchAPI = (): Promise<void> => {
 
     scriptLoading = true;
 
+    // タイムアウト設定（10秒）
+    const timeout = setTimeout(() => {
+      scriptLoading = false;
+      reject(new Error('Twitch APIの読み込みがタイムアウトしました。ネットワーク接続を確認してください。'));
+    }, 10000);
+
     // スクリプトタグを追加
     const script = document.createElement('script');
     script.src = 'https://embed.twitch.tv/embed/v1.js';
     script.async = true;
     script.onload = () => {
+      clearTimeout(timeout);
       scriptLoaded = true;
       scriptLoading = false;
       resolve();
@@ -38,8 +45,9 @@ export const loadTwitchAPI = (): Promise<void> => {
       scriptLoadCallbacks.length = 0;
     };
     script.onerror = () => {
+      clearTimeout(timeout);
       scriptLoading = false;
-      reject(new Error('Failed to load Twitch Embed API'));
+      reject(new Error('Twitch APIの読み込みに失敗しました。ネットワーク接続を確認してください。'));
     };
 
     document.head.appendChild(script);

@@ -21,12 +21,24 @@ export const useChannelNavigation = () => {
         newIndex = direction;
       }
 
-      if (newIndex < 0 || newIndex >= channels.length) {
-        throw new Error('Index out of range');
+      // インデックス範囲外の自動補正
+      if (newIndex < 0) {
+        console.warn(`Index ${newIndex} is out of range, correcting to 0`);
+        newIndex = 0;
+      } else if (newIndex >= channels.length) {
+        console.warn(
+          `Index ${newIndex} is out of range, correcting to ${channels.length - 1}`
+        );
+        newIndex = channels.length - 1;
       }
 
       setCurrentIndex(newIndex);
-      saveToLocalStorage(STORAGE_KEYS.CURRENT_INDEX, newIndex);
+      try {
+        saveToLocalStorage(STORAGE_KEYS.CURRENT_INDEX, newIndex);
+      } catch (error) {
+        // localStorage保存失敗時はログのみ（状態は更新済み）
+        console.error('Failed to save current index to localStorage:', error);
+      }
     },
     [channels, currentIndex, setCurrentIndex]
   );

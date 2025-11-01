@@ -6,7 +6,7 @@ let scriptLoading = false;
 const scriptLoadCallbacks: (() => void)[] = [];
 
 /**
- * YouTube IFrame API スクリプトを非同期で読み込む
+ * YouTube IFrame API スクリプトを非同期で読み込む（タイムアウト付き）
  */
 export const loadYouTubeAPI = (): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -24,8 +24,15 @@ export const loadYouTubeAPI = (): Promise<void> => {
 
     scriptLoading = true;
 
+    // タイムアウト設定（10秒）
+    const timeout = setTimeout(() => {
+      scriptLoading = false;
+      reject(new Error('YouTube APIの読み込みがタイムアウトしました。ネットワーク接続を確認してください。'));
+    }, 10000);
+
     // グローバルコールバックを設定
     window.onYouTubeIframeAPIReady = () => {
+      clearTimeout(timeout);
       scriptLoaded = true;
       scriptLoading = false;
       resolve();
@@ -40,8 +47,9 @@ export const loadYouTubeAPI = (): Promise<void> => {
     script.src = 'https://www.youtube.com/iframe_api';
     script.async = true;
     script.onerror = () => {
+      clearTimeout(timeout);
       scriptLoading = false;
-      reject(new Error('Failed to load YouTube IFrame API'));
+      reject(new Error('YouTube APIの読み込みに失敗しました。ネットワーク接続を確認してください。'));
     };
 
     document.head.appendChild(script);

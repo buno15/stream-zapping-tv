@@ -13,18 +13,18 @@ export const useChannels = () => {
     async (url: string) => {
       // チャンネル数制限チェック
       if (channels.length >= CHANNEL.MAX_CHANNELS) {
-        throw new Error(`Maximum ${CHANNEL.MAX_CHANNELS} channels allowed`);
+        throw new Error(`チャンネル数の上限（${CHANNEL.MAX_CHANNELS}個）に達しています`);
       }
 
       // URL解析
       const parsed = parseChannelUrl(url);
       if (!parsed) {
-        throw new Error('Invalid URL');
+        throw new Error('無効なURLです。YouTubeまたはTwitchのURLを入力してください');
       }
 
       // 重複チェック
       if (channels.some((c) => c.id === parsed.id)) {
-        throw new Error('Channel already exists');
+        throw new Error('このチャンネルは既に登録されています');
       }
 
       // チャンネル追加
@@ -37,7 +37,13 @@ export const useChannels = () => {
       setChannels(updatedChannels);
 
       // localStorage に保存
-      saveToLocalStorage(STORAGE_KEYS.CHANNELS, updatedChannels);
+      try {
+        saveToLocalStorage(STORAGE_KEYS.CHANNELS, updatedChannels);
+      } catch (storageError) {
+        // localStorage保存失敗時は状態を元に戻す
+        setChannels(channels);
+        throw storageError;
+      }
     },
     [channels, setChannels]
   );

@@ -20,6 +20,8 @@ export const usePlayer = (elementId: string) => {
   const [currentPlatform, setCurrentPlatform] = useState<
     'youtube' | 'twitch' | null
   >(null);
+  const switchingRef = useRef<boolean>(false);
+  const pendingChannelRef = useRef<Channel | null>(null);
 
   // プレイヤー初期化
   useEffect(() => {
@@ -34,6 +36,15 @@ export const usePlayer = (elementId: string) => {
 
   const switchToChannel = useCallback(
     async (channel: Channel) => {
+      // プレイヤー状態競合の処理（キューイング）
+      if (switchingRef.current) {
+        console.warn('Channel switch already in progress, queuing request');
+        pendingChannelRef.current = channel;
+        return;
+      }
+
+      switchingRef.current = true;
+
       try {
         // レート制限を適用
         await channelSwitchLimiter.throttle();
@@ -92,6 +103,16 @@ export const usePlayer = (elementId: string) => {
       } catch (error) {
         console.error('Failed to switch channel:', error);
         setPlayerState('error');
+      } finally {
+        switchingRef.current = false;
+
+        // キューイングされたリクエストを処理
+        if (pendingChannelRef.current) {
+          const pendingChannel = pendingChannelRef.current;
+          pendingChannelRef.current = null;
+          // 非同期で次のリクエストを処理
+          setTimeout(() => switchToChannel(pendingChannel), 0);
+        }
       }
     },
     [elementId, setPlayerState]
