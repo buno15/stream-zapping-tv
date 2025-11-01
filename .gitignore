@@ -3,4 +3,5 @@
 .vscode
 .idea
 .DS_Store
+.serena
 node_modules
