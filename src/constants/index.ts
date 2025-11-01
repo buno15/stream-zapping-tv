@@ -38,6 +38,9 @@ export const BREAKPOINTS = {
 // URL パターン
 export const URL_PATTERNS = {
   YOUTUBE: {
+    // ビデオURL（ライブ配信を含む）
+    VIDEO: /(?:youtube\.com\/(?:watch\?v=|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+    // チャンネルURL
     AT: /youtube\.com\/@([^/?]+)/,
     CHANNEL: /youtube\.com\/channel\/([^/?]+)/,
     C: /youtube\.com\/c\/([^/?]+)/,

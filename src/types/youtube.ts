@@ -7,10 +7,11 @@ export interface YouTubePlayerEvent {
 }
 
 export interface YouTubePlayer {
-  loadVideoById(videoId: string, startSeconds?: number): void;
+  loadVideoById(videoId: string, idType?: string): void;
   playVideo(): void;
   pauseVideo(): void;
   stopVideo(): void;
+  destroy(): void;
   getPlayerState(): number;
   addEventListener(event: string, listener: (event: YouTubePlayerEvent) => void): void;
   removeEventListener(event: string, listener: (event: YouTubePlayerEvent) => void): void;

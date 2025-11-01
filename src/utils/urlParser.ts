@@ -6,6 +6,7 @@ export interface ParsedChannel {
   platform: Platform;
   url: string;
   displayName: string;
+  idType?: 'channel' | 'handle' | 'custom' | 'video'; // YouTubeのID形式
 }
 
 /**
@@ -20,17 +21,56 @@ export const parseChannelUrl = (url: string): ParsedChannel | null => {
   }
 
   // YouTube URL のパース
-  for (const [, pattern] of Object.entries(URL_PATTERNS.YOUTUBE)) {
-    const match = url.match(pattern);
-    if (match && match[1]) {
-      const id = match[1];
-      return {
-        id,
-        platform: 'youtube',
-        url,
-        displayName: id,
-      };
-    }
+  // ビデオURL形式を最優先でチェック（ライブ配信を含む）
+  const videoMatch = url.match(URL_PATTERNS.YOUTUBE.VIDEO);
+  if (videoMatch && videoMatch[1]) {
+    const videoId = videoMatch[1];
+    return {
+      id: videoId,
+      platform: 'youtube',
+      url,
+      displayName: `Video: ${videoId.substring(0, 8)}...`,
+      idType: 'video',
+    };
+  }
+
+  // @ハンドル形式
+  const atMatch = url.match(URL_PATTERNS.YOUTUBE.AT);
+  if (atMatch && atMatch[1]) {
+    const id = atMatch[1];
+    return {
+      id,
+      platform: 'youtube',
+      url,
+      displayName: `@${id}`,
+      idType: 'handle',
+    };
+  }
+
+  // チャンネルID形式
+  const channelMatch = url.match(URL_PATTERNS.YOUTUBE.CHANNEL);
+  if (channelMatch && channelMatch[1]) {
+    const id = channelMatch[1];
+    return {
+      id,
+      platform: 'youtube',
+      url,
+      displayName: id,
+      idType: 'channel',
+    };
+  }
+
+  // カスタムURL形式
+  const customMatch = url.match(URL_PATTERNS.YOUTUBE.C);
+  if (customMatch && customMatch[1]) {
+    const id = customMatch[1];
+    return {
+      id,
+      platform: 'youtube',
+      url,
+      displayName: id,
+      idType: 'custom',
+    };
   }
 
   // Twitch URL のパース

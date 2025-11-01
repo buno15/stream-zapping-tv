@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { Box, IconButton, Typography, Tooltip } from '@mui/material';
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
@@ -10,7 +10,7 @@ import {
 } from '@/store/channelAtoms';
 import { useChannelNavigation } from '@/hooks/useChannelNavigation';
 
-export const NavigationControls: FC = () => {
+export const NavigationControls: FC = memo(() => {
   const channels = useAtomValue(channelsAtom);
   const currentIndex = useAtomValue(currentIndexAtom);
   const currentChannel = useAtomValue(currentChannelAtom);
@@ -84,4 +84,4 @@ export const NavigationControls: FC = () => {
       </Box>
     </Box>
   );
-};
+});

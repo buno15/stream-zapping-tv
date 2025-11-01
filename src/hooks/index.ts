@@ -6,3 +6,4 @@ export { usePlayer } from './usePlayer';
 export { useKeyboardShortcuts } from './useKeyboardShortcuts';
 export { useSwipeGesture } from './useSwipeGesture';
 export { useOrientation } from './useOrientation';
+export { useInitialLoad } from './useInitialLoad';

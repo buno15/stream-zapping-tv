@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, memo } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { currentChannelAtom } from '@/store/channelAtoms';
@@ -6,7 +6,7 @@ import { usePlayer } from '@/hooks/usePlayer';
 
 const PLAYER_ELEMENT_ID = 'player-container';
 
-export const VideoPlayer: FC = () => {
+export const VideoPlayer: FC = memo(() => {
   const currentChannel = useAtomValue(currentChannelAtom);
   const { playerState, switchToChannel } = usePlayer(PLAYER_ELEMENT_ID);
 
@@ -71,4 +71,4 @@ export const VideoPlayer: FC = () => {
       {renderContent()}
     </Box>
   );
-};
+});

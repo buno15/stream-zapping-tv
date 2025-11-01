@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, memo } from 'react';
 import {
   Box,
   TextField,
@@ -9,7 +9,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { useChannels } from '@/hooks/useChannels';
 
-export const AddChannelForm: FC = () => {
+export const AddChannelForm: FC = memo(() => {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -83,4 +83,4 @@ export const AddChannelForm: FC = () => {
       )}
     </Box>
   );
-};
+});

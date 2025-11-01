@@ -11,7 +11,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { AppProviders } from './providers/AppProviders';
-import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { useKeyboardShortcuts, useInitialLoad } from './hooks';
 import {
   VideoPlayer,
   NavigationControls,
@@ -54,6 +54,8 @@ const ControlPanel: FC = () => (
 
 const AppContent: FC = () => {
   useKeyboardShortcuts();
+  useInitialLoad();
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md')); // < 768px
   const isTablet = useMediaQuery(theme.breakpoints.between('md', 'lg')); // 768px-1023px

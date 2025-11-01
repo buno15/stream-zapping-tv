@@ -6,4 +6,5 @@ export interface Channel {
   url: string;
   displayName: string;
   addedAt: Date;
+  idType?: 'channel' | 'handle' | 'custom' | 'video'; // YouTubeのID形式
 }

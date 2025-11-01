@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import {
   Box,
   List,
@@ -18,7 +18,7 @@ import { useChannels } from '@/hooks/useChannels';
 import { useChannelNavigation } from '@/hooks/useChannelNavigation';
 import type { Channel } from '@/types';
 
-const PlatformIcon: FC<{ platform: Channel['platform'] }> = ({ platform }) => {
+const PlatformIcon: FC<{ platform: Channel['platform'] }> = memo(({ platform }) => {
   if (platform === 'youtube') {
     return <YouTubeIcon className="text-red-500" />;
   }
@@ -31,9 +31,9 @@ const PlatformIcon: FC<{ platform: Channel['platform'] }> = ({ platform }) => {
       T
     </Box>
   );
-};
+});
 
-export const ChannelList: FC = () => {
+export const ChannelList: FC = memo(() => {
   const channels = useAtomValue(channelsAtom);
   const currentIndex = useAtomValue(currentIndexAtom);
   const { removeChannel } = useChannels();
@@ -118,10 +118,11 @@ export const ChannelList: FC = () => {
                   )}
                 </Box>
               }
+              secondaryTypographyProps={{ component: 'div' }}
             />
           </ListItemButton>
         </ListItem>
       ))}
     </List>
   );
-};
+});
